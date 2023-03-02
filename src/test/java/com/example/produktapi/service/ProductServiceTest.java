@@ -277,4 +277,11 @@ class ProductServiceTest {
     }
 
 
+    @Test
+    void testingGitHubActions(){
+
+
+        assertEquals(5,3);
+    }
+
 }
