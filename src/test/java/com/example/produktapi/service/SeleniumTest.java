@@ -18,7 +18,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 public class SeleniumTest {
 
 
-/*
+
     @Test
     void Checkiftitelmatches() {
 
@@ -201,6 +201,4 @@ public class SeleniumTest {
 
         driver.quit();
     }
-
- */
 }
