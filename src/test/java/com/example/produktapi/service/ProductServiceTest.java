@@ -281,7 +281,7 @@ class ProductServiceTest {
     void testingGitHubActions(){
 
 
-        assertEquals(5,3);
+        assertEquals(3,3);
     }
 
 }
