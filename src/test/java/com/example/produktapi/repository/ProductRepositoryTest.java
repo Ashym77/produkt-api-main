@@ -16,7 +16,7 @@ import static org.junit.jupiter.api.Assertions.*;
 class ProductRepositoryTest {
 
 
-    @Autowired
+    @Autowired // för att kunna instantansiera
     private ProductRepository underTest;
 
 
@@ -77,11 +77,11 @@ class ProductRepositoryTest {
     }
 
     @Test
-    void testfindAllCategories() {
+    void testfindAllCategories_givenDummylistOfCategorys_whenFindAllCategorys_thenCheckIfListIsnotDuplicatedAndcheckIfFindallCAtegorysizeis4() {
 
         //given
 
-        // vår dummy lista på categorys
+        // vår  skapade dummy list på categorys
         List<String> existingcategory = new ArrayList<>(Arrays.asList("electronics",
                 "jewelery", "men's clothing", "women's clothing"
         ));
@@ -108,19 +108,20 @@ class ProductRepositoryTest {
 
 
     @Test
-    void whenSerchingForNonexistingtile_thenreturnemptyoptional() {
+    void whenSerchingForNonExistingtilethen_ThrowException() {
 
-
+        //when
         Optional<Product> optionalProduct = underTest.findByTitle("en title som inte finns");
 
 
-
+        //then
         Assertions.assertAll(
 
 
                 () -> assertFalse(optionalProduct.isPresent()),
                 () -> assertTrue(optionalProduct.isEmpty()),
                 () -> assertThrows(Exception.class, () -> optionalProduct.get())
+
 
         );
 

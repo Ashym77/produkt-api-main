@@ -13,6 +13,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import java.awt.*;
 import java.util.List;
 import java.util.Optional;
 
@@ -33,11 +34,13 @@ class ProductServiceTest {
     @InjectMocks
     private ProductService underTest;
 
+
+
     Integer id = 2;
 
 
     @Test
-    void WhenGetALLProducts_ThenExactlyOneInteractionWhitRepositoryMehtodFindall() {
+    void WhenGetALLProducts_ThenExactlyOneInteractionWhitRepositoryMethodFindall() {
         // when
         underTest.getAllProducts();
 
@@ -51,7 +54,7 @@ class ProductServiceTest {
     }
 
     @Test
-    void WhenGetALLCaterg0rys_ThenExactlyOneInteractionWhitRepositoryMehtodFindall() {
+    void WhenGetALLCaterg0rys_ThenExactlyOneInteractionWhitRepositoryMethodFindall() {
 
         //when
         underTest.getAllCategories();
@@ -62,7 +65,7 @@ class ProductServiceTest {
     }
 
     @Test
-    void testgetProductsByCategory_givenAnExistingCategory_whenthenReciveANonEmptylist() {
+    void testgetProductsByCategory_givenAnExistingCategory_thenReciveANonEmptylist() {
 
 
         //given
@@ -73,7 +76,7 @@ class ProductServiceTest {
         given(repository.findByCategory(category)).willReturn(List.of(product));
 
 
-        // When När metoden getProductsByCategory anropas med kategorin "hallp" och produkten skickas tillbaka.
+        // When När metoden getProductsByCategory anropas med kategorin "pokemon" och produkten skickas tillbaka.
         List<Product> result = underTest.getProductsByCategory(category);
 
 
@@ -87,29 +90,32 @@ class ProductServiceTest {
 
 
     @Test
-    void getproductbyid() {
+    void testgetproductbyidGivenExistingId_whenGetProdcutByID_ThenReciveProductById() {
 
-//given
+        //given  have a global id that is set at top of the page
 
         Product product = new Product("", 45.00, "", "", "");
 
         product.setId(id);
 
-        underTest.addProduct(product);
-
-
-//then
 
 
         given(repository.findById(product.getId())).willReturn(Optional.of(product));
-        Assertions.assertTrue(repository.findById(product.getId()).isPresent());
+
+        //when
+        underTest.addProduct(product);
+
+
+        //then
+
+        Assertions.assertTrue(repository.findById(id).isPresent());
 
 
     }
 
 
     @Test
-    void testGetProductByIDWhenNonExistingIdIsGiven_ThenThrowEntityNotFoundException() {
+    void testGetProductByIDwhen_NonExistingIdIsGiven_thenThrowEntityNotFoundException() {
 
         //when
         when(repository.findById(id)).thenReturn(Optional.empty());
@@ -133,7 +139,7 @@ class ProductServiceTest {
 
         Product product = new Product("dator rätt object som sparas", 4000.0, "", "", "");
 
-        //Product product2=new Product("dator som är fel object",4000.0,"","","");
+
         //when
 
         underTest.addProduct(product);
@@ -144,7 +150,7 @@ class ProductServiceTest {
     }
 
     @Test
-    void WhenaddingProductsWithDuplicateTitle_thenThrowError() {
+    void WhenaddingProductsWithDuplicateTitle_thenThrowBadExceptionError() {
 
         //given
         String title = "vår test-title";
@@ -164,7 +170,7 @@ class ProductServiceTest {
     }
 
     @Test
-    void testUdateProduct_WhenFindById_thenUpdateProduct() {
+    void testUdateProductgivenProduct_whenFindById_thenUpdateProduct() {
 
         Integer id = 4;
 
@@ -201,7 +207,7 @@ class ProductServiceTest {
     }
 
     @Test
-    void testUdateProduct_WhenFindById_() {
+    void testUdateProductwhenTypingInInvalidIdThenThrowEntityNotFoundException() {
 
         Integer id = 4;
 
@@ -211,7 +217,7 @@ class ProductServiceTest {
         EntityNotFoundException exception = assertThrows(EntityNotFoundException.class, () -> {
 
 
-                    underTest.updateProduct(updateproduct, id);
+                    underTest.updateProduct(updateproduct, 5);
                 }
         );
 
@@ -223,7 +229,7 @@ class ProductServiceTest {
 
 
     @Test
-    void testDeleteProduct_whengetprodcutbyid_IfidExist_thendeleteproduct() {
+    void testDeleteProduct_givenValidID_whenFindByID_thenInteratcionWhitDeleteByIDEcaxtlyOneTime() {
 
 
         //given
@@ -233,8 +239,9 @@ class ProductServiceTest {
         String category = "pokemon";
 
         Product product = new Product("pikachu", 200.44, category, "electric", "bild");
+
         product.setId(id);
-        System.out.println(product);
+
 
         //when
         when(repository.findById(id)).thenReturn(Optional.of(product));
@@ -242,17 +249,19 @@ class ProductServiceTest {
 
         underTest.deleteProduct(id);
 
-        System.out.println(underTest);
 
-        verify(repository, times(1)).deleteById(id);
+
+
 
 
 //then
 
-        assertNotNull(underTest.getProductById(id));
+        verify(repository, times(1)).deleteById(id);
+        verify(repository, times(1)).findById(id);
+        verifyNoMoreInteractions(repository);
 
 
-        underTest.deleteProduct(id);
+
 
     }
 
