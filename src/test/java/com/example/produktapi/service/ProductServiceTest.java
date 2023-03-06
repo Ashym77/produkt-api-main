@@ -217,7 +217,7 @@ class ProductServiceTest {
         EntityNotFoundException exception = assertThrows(EntityNotFoundException.class, () -> {
 
 
-                    underTest.updateProduct(updateproduct, 5);
+                    underTest.updateProduct(updateproduct, id);
                 }
         );
 
