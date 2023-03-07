@@ -12,19 +12,26 @@ import java.util.List;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
-@DataJpaTest
+@DataJpaTest    //
 class ProductRepositoryTest {
 
 
-    @Autowired // för att kunna instantansiera
+    @Autowired //hjälper oss att skapa en instace av productrepository
     private ProductRepository underTest;
 
 
-    private ProductRepository repository;
+   @Test
+   void whentestingREpositoryWhitFindAll_thenFalseIfNotEmpty(){
+
+
+       List<Product>product =underTest.findAll();
+
+       assertFalse(product.isEmpty());
+   }
 
 
     @Test
-    void testfindbycategoryWhengiveAnExistingCAtegoryThenTeturnNotEmpty() {
+    void giveAnCAtegoryNameAndSavingProductwhen_FindByCategorythen_thenCheckIfNotEmpty_thenCheckIfNameIsSameAsGiven() {
 //given
         String category = "jewelery";
 
@@ -47,15 +54,8 @@ class ProductRepositoryTest {
     }
 
 
-
-
-
-
-
-
-
     @Test
-    void whenSerchingForExistingTitle_thenReturnTruee() {
+    void given_ProductTitlewhen_SerchingForExistingTitle_thenCheckIfPresemtthenReturnProduct() {
         //given
         String title = "en dator";
         Product product = new Product(title
@@ -76,8 +76,33 @@ class ProductRepositoryTest {
         );
     }
 
+
     @Test
-    void testfindAllCategories_givenDummylistOfCategorys_whenFindAllCategorys_thenCheckIfListIsnotDuplicatedAndcheckIfFindallCAtegorysizeis4() {
+    void when_SerchingForNonExistingtilethen_ThrowExceptionIfFalse() {
+
+        //when
+        Optional<Product> optionalProduct = underTest.findByTitle("en title som inte finns");
+
+
+        //then
+        Assertions.assertAll(
+
+
+                () -> assertFalse(optionalProduct.isPresent()),
+                () -> assertTrue(optionalProduct.isEmpty()),
+                () -> assertThrows(Exception.class, () -> optionalProduct.get())
+
+
+        );
+
+
+    }
+
+
+
+
+    @Test
+    void givenDummylistOfCategorys_whenFindAllCategorys_thenCheckIfListIsNotDuplicatedAndcheckIfFindallCAtegorysizeis4() {
 
         //given
 
@@ -105,28 +130,6 @@ class ProductRepositoryTest {
     }
 
 
-
-
-    @Test
-    void whenSerchingForNonExistingtilethen_ThrowException() {
-
-        //when
-        Optional<Product> optionalProduct = underTest.findByTitle("en title som inte finns");
-
-
-        //then
-        Assertions.assertAll(
-
-
-                () -> assertFalse(optionalProduct.isPresent()),
-                () -> assertTrue(optionalProduct.isEmpty()),
-                () -> assertThrows(Exception.class, () -> optionalProduct.get())
-
-
-        );
-
-
-    }
 
 
 

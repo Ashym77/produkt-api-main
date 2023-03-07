@@ -5,6 +5,7 @@ import com.example.produktapi.exception.EntityNotFoundException;
 import com.example.produktapi.model.Product;
 import com.example.produktapi.repository.ProductRepository;
 import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
@@ -23,15 +24,15 @@ import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.*;
 import static org.mockito.Mockito.times;
 
-@ExtendWith(MockitoExtension.class)
+@ExtendWith(MockitoExtension.class) //sätter upp miljön för mocking
 
 class ProductServiceTest {
     @Captor
     ArgumentCaptor<Product> productCaptor;
-    @Mock
+    @Mock //det som ska mockas
     private ProductRepository repository;
 
-    @InjectMocks
+    @InjectMocks // det som är beroende utav mockningen
     private ProductService underTest;
 
 
@@ -65,7 +66,7 @@ class ProductServiceTest {
     }
 
     @Test
-    void testgetProductsByCategory_givenAnExistingCategory_thenReciveANonEmptylist() {
+    void givenAnExistingCategorywhenGetProductsByCategory_thenReciveANonEmptylist() {
 
 
         //given
@@ -90,7 +91,8 @@ class ProductServiceTest {
 
 
     @Test
-    void testgetproductbyidGivenExistingId_whenGetProdcutByID_ThenReciveProductById() {
+    @DisplayName("normal flöde")
+    void givenAnExistingId_whenGetProdcutByID_ThenReciveProductById() {
 
         //given  have a global id that is set at top of the page
 
@@ -106,7 +108,9 @@ class ProductServiceTest {
         underTest.addProduct(product);
 
 
+
         //then
+
 
         Assertions.assertTrue(repository.findById(id).isPresent());
 
@@ -115,6 +119,8 @@ class ProductServiceTest {
 
 
     @Test
+
+
     void testGetProductByIDwhen_NonExistingIdIsGiven_thenThrowEntityNotFoundException() {
 
         //when
@@ -134,6 +140,7 @@ class ProductServiceTest {
     }
 
     @Test
+    @DisplayName("Add-metod normal-flöde")
     void whenAddingAProduct_thensaveMethodShouldbeCalled() {
         //given
 
@@ -150,7 +157,8 @@ class ProductServiceTest {
     }
 
     @Test
-    void WhenaddingProductsWithDuplicateTitle_thenThrowBadExceptionError() {
+    @DisplayName("Add metod felflöde")
+    void givenAnExisting_TitlewhenAddingProductsWithDuplicatedTitle_thenThrowBadExceptionError() {
 
         //given
         String title = "vår test-title";
@@ -170,11 +178,12 @@ class ProductServiceTest {
     }
 
     @Test
-    void testUdateProductgivenProduct_whenFindById_thenUpdateProduct() {
+    void givenTwoProduct_whenFindByID_thenVerifyNewProdut() {
 
         Integer id = 4;
 
         //given
+
 
         Product product = new Product("dator rätt object som sparas",
                 4000.0, "electronic", " computer", "");
@@ -182,32 +191,29 @@ class ProductServiceTest {
         product.setId(id);
         System.out.println(product);
 
-        Product updatedproduct = new Product("", 45.0, "", "", "");
+        Product newproduct = new Product("ny data", 45.0, "electronic", "pc", "");
 
-        updatedproduct.setId(id);
-        updatedproduct.setTitle("charmander");
-        updatedproduct.setDescription("fire-type");
-        updatedproduct.setCategory("pokemon");
-        System.out.println(updatedproduct);
+
+
 
 //when
-        when(repository.findById(id)).thenReturn(Optional.of(updatedproduct));
-        when(repository.save(updatedproduct)).thenReturn(updatedproduct);
+        when(repository.findById(id)).thenReturn(Optional.of(product));
+        underTest.updateProduct(newproduct,product.getId());
 
 
-        Product result = underTest.updateProduct(updatedproduct, id);
 
         //then
 
-        assertEquals("charmander", result.getTitle());//checking if updated tile is charmander
-        assertEquals("fire-type", result.getDescription());// check if  result of decsiption is fire-type
-        assertEquals("pokemon", result.getCategory()); // chck if result of category is pokemon
+        verify(repository,times(1)).findById(product.getId());
+        verify(repository,times(1)).save(newproduct);
+        verifyNoMoreInteractions(repository);
+
 
 
     }
 
     @Test
-    void testUdateProductwhenTypingInInvalidIdThenThrowEntityNotFoundException() {
+    void givenAnIdifMatched_IfIdIsNotValid_thenThrowEntityNotFoudnException () {
 
         Integer id = 4;
 
@@ -229,7 +235,7 @@ class ProductServiceTest {
 
 
     @Test
-    void testDeleteProduct_givenValidID_whenFindByID_thenInteratcionWhitDeleteByIDEcaxtlyOneTime() {
+    void givenValidID_whenFindByID_thenInteratcionWhitDeleteByIDEcaxtlyOneTime() {
 
 
         //given
@@ -250,24 +256,17 @@ class ProductServiceTest {
         underTest.deleteProduct(id);
 
 
-
-
-
-
-//then
+        //then
 
         verify(repository, times(1)).deleteById(id);
         verify(repository, times(1)).findById(id);
         verifyNoMoreInteractions(repository);
 
-
-
-
     }
 
 
     @Test
-    void testDeleteProduct_whengetProductbyid_ifProductbyidIsNotFound_thenThrowEntitynotfounds() {
+    void whengetProductbyIdIFifProductbyidIsNotFound_thenThrowEntitynotfoundsException() {
 
         Integer id = 4;
 
